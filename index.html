@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finesse Connectivity Spike</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="ws-auth-shim.js"></script>
+  <script src="vendor/strophe.js"></script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Finesse Connectivity Spike</h1>
+    <p class="sub">Phase 1 of the Salesforce Voice connector — proves REST, events and call control against Finesse.</p>
+    <p class="origin">This page's origin: <code id="origin"></code> — it must be in the Finesse CORS allow-list for <b>Direct</b> mode.</p>
+  </header>
+
+  <main>
+    <section class="card" id="settings">
+      <h2>1 · Connection</h2>
+      <form id="cfg" autocomplete="off">
+        <label>Finesse FQDN <span class="opt">(or the reverse proxy's public FQDN)</span> <input name="host" placeholder="finesse-a.example.com" required /></label>
+        <div class="row">
+          <label>REST port <input name="restPort" placeholder="8445" size="6" /></label>
+          <label>Notification port <input name="xmppPort" placeholder="7443" size="6" /></label>
+        </div>
+        <label class="check"><input type="checkbox" name="reverseProxy" /> Behind Cisco Reverse Proxy (VPN-less Finesse) — forces WebSocket and sends its credentials</label>
+        <label>Agent ID <input name="agentId" placeholder="1001" required /></label>
+        <label>Login name <span class="opt">(optional, for auth)</span> <input name="authId" placeholder="defaults to Agent ID" /></label>
+        <label>Password <input name="password" type="password" required autocomplete="new-password" /></label>
+        <label>Extension <input name="extension" placeholder="5001" required /></label>
+        <label>Mode
+          <select name="mode">
+            <option value="direct">Direct (browser → Finesse, tests CORS)</option>
+            <option value="proxy">Via local proxy (bypasses CORS)</option>
+          </select>
+        </label>
+        <label>Event transport
+          <select name="transport">
+            <option value="bosh">BOSH (https :7443/http-bind)</option>
+            <option value="websocket">WebSocket (wss :7443/ws, direct only)</option>
+          </select>
+        </label>
+        <div class="row">
+          <button type="submit" class="primary">Run connectivity check</button>
+          <button type="button" id="disconnect">Disconnect events</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" id="checks">
+      <h2>2 · Checklist</h2>
+      <ol id="checklist">
+        <li data-step="rest"><span class="pill">—</span> REST reachable (<code>GET /finesse/api/SystemInfo</code>) <div class="detail"></div></li>
+        <li data-step="auth"><span class="pill">—</span> Credentials valid (<code>GET /finesse/api/User/{id}</code>) <div class="detail"></div></li>
+        <li data-step="xmpp"><span class="pill">—</span> Event channel connected (XMPP) <div class="detail"></div></li>
+        <li data-step="event"><span class="pill">—</span> Event received (change state or place a call) <div class="detail"></div></li>
+      </ol>
+    </section>
+
+    <section class="card" id="agent">
+      <h2>3 · Agent</h2>
+      <dl class="kv">
+        <dt>Name</dt><dd id="a-name">—</dd>
+        <dt>State</dt><dd><span id="a-state" class="state">—</span> <span id="a-reason" class="muted"></span></dd>
+        <dt>Extension</dt><dd id="a-ext">—</dd>
+        <dt>Team</dt><dd id="a-team">—</dd>
+      </dl>
+      <div class="row">
+        <button data-act="login">Login</button>
+        <button data-act="ready">Ready</button>
+        <select id="nr-reason"><option value="">No reason</option></select>
+        <button data-act="notready">Not Ready</button>
+        <button data-act="logout">Logout</button>
+        <button data-act="refresh">Refresh</button>
+      </div>
+    </section>
+
+    <section class="card" id="calls">
+      <h2>4 · Calls</h2>
+      <div class="row">
+        <input id="dial" placeholder="Number to dial" />
+        <button data-act="dial">Make call</button>
+      </div>
+      <div id="dialogs"><p class="muted">No active calls.</p></div>
+    </section>
+
+    <section class="card wide" id="logcard">
+      <h2>Log
+        <span class="row inline">
+          <label class="check"><input type="checkbox" id="show-raw" /> raw XMPP</label>
+          <button id="copy-log">Copy</button>
+          <button id="clear-log">Clear</button>
+        </span>
+      </h2>
+      <div id="log"></div>
+    </section>
+  </main>
+</body>
+</html>

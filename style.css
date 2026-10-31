@@ -1,0 +1,107 @@
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1d2330;
+  --muted: #6b7280;
+  --border: #e3e6eb;
+  --accent: #0b5cad;
+  --ok: #1a7f37;
+  --warn: #9a6700;
+  --bad: #c62828;
+  --code: #eef1f5;
+  --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151b;
+    --card: #1b1f27;
+    --text: #e6e8ec;
+    --muted: #9aa3b2;
+    --border: #2c323d;
+    --accent: #5aa2f0;
+    --ok: #4cc26b;
+    --warn: #e0b341;
+    --bad: #f0645a;
+    --code: #252b35;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+header { padding: 20px 16px 4px; max-width: 1200px; margin: 0 auto; }
+h1 { margin: 0 0 4px; font-size: 20px; }
+h2 { margin: 0 0 12px; font-size: 15px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sub, .origin { margin: 2px 0; color: var(--muted); }
+code { font-family: var(--mono); background: var(--code); padding: 1px 4px; border-radius: 4px; font-size: 12px; }
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; min-width: 0; }
+.card.wide { grid-column: 1 / -1; }
+form { display: grid; gap: 10px; }
+label { display: grid; gap: 4px; font-weight: 500; }
+label.check { display: inline-flex; align-items: center; gap: 4px; font-weight: 400; font-size: 13px; }
+.opt { color: var(--muted); font-weight: 400; }
+input, select, button {
+  font: inherit;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row.inline { font-size: 13px; }
+.muted { color: var(--muted); }
+
+#checklist { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.pill {
+  display: inline-block; min-width: 54px; text-align: center; font-size: 11px; font-weight: 600;
+  padding: 1px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); margin-right: 4px;
+}
+.pill.ok { color: var(--ok); border-color: var(--ok); }
+.pill.bad { color: var(--bad); border-color: var(--bad); }
+.pill.run { color: var(--warn); border-color: var(--warn); }
+.detail { color: var(--muted); font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }
+.detail.bad { color: var(--bad); }
+
+.kv { display: grid; grid-template-columns: 90px 1fr; gap: 4px 12px; margin: 0 0 12px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+.state { font-weight: 700; }
+.state.READY { color: var(--ok); }
+.state.NOT_READY, .state.LOGOUT { color: var(--bad); }
+.state.TALKING, .state.RESERVED, .state.WORK, .state.WORK_READY { color: var(--warn); }
+
+#dialogs { margin-top: 12px; display: grid; gap: 10px; }
+.dialog { border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+.dialog .head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+.dialog .vars { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 6px 0; overflow-wrap: anywhere; }
+
+#log {
+  font-family: var(--mono); font-size: 12px; max-height: 420px; overflow: auto;
+  background: var(--code); border-radius: 6px; padding: 8px;
+}
+.line { white-space: pre-wrap; overflow-wrap: anywhere; padding: 2px 0; border-bottom: 1px dashed var(--border); }
+.line .t { color: var(--muted); margin-right: 6px; }
+.line.req .lvl { color: var(--accent); }
+.line.res .lvl { color: var(--ok); }
+.line.error .lvl { color: var(--bad); }
+.line.event .lvl { color: var(--warn); }
+.line.raw { display: none; color: var(--muted); }
+#log.show-raw .line.raw { display: block; }
+.line details summary { cursor: pointer; color: var(--muted); }
